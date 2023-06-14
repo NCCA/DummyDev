@@ -50,7 +50,7 @@ class Runner:
         if self.pre_build:
             print(f"running {self.pre_build}")
             os.chdir(f'{self.working_directory}/{self.build_data["root_directory"]}/{self.build_data["build_directory"]}')
-            data=subprocess.run(self.pre_build, shell=True)
+            subprocess.run(self.pre_build, shell=True)
 
 
     def _create_project_files(self)-> None:
@@ -76,13 +76,19 @@ class Runner:
 
     def _process_build_steps(self) -> None:
         for step in self.build_data["steps"]:
-            if step["add"] :
-                for file,tag in step["add"].items():
-                    with open(f"{self.working_directory}/{self.root_directory}/{file}", "a") as f:
-                        f.write(self.manifest[tag])
-                self._build()
+            for file,tag in step["add"].items():
+                with open(f"{self.working_directory}/{self.root_directory}/{file}", "a") as f:
+                    f.write(self.manifest[tag])
+            for file,tag in step["replace"].items():
+                with open(f"{self.working_directory}/{self.root_directory}/{file}", "w") as f:
+                    f.write(self.manifest[tag])
+            self._build()
+            os.chdir(f'{self.working_directory}/{self.build_data["root_directory"]}/{self.build_data["build_directory"]}')
+            data=subprocess.run(step["run"], shell=True)
+
+
 
     def _build(self) -> None:
         print(f"running {self.build_command}")
         os.chdir(f'{self.working_directory}/{self.build_data["root_directory"]}/{self.build_data["build_directory"]}')
-        data=subprocess.run(self.build_command, shell=True)
+        subprocess.run(self.build_command, shell=True)

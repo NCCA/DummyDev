@@ -10,10 +10,12 @@ int main()
 }
 
 @Tag 2
-
-cmake_minimum_required(VERSION 3.12)
 project(HelloWorld)
-add_executable(HelloWorld src/main.cpp)
+cmake_minimum_required(VERSION 3.22)
+# Here we set the C++ standard to use
+set(CMAKE_CXX_STANDARD 17)
+include_directories(include)
+add_executable(HelloWorld src/main.cpp include/hello_world.h)
 
 @Tag 3
 
@@ -22,3 +24,16 @@ add_executable(HelloWorld src/main.cpp)
 static int test_value=99;
 #endif
 
+@Tag 4
+
+#include <iostream>
+#include <cstdlib>
+#include "hello_world.h"
+
+int main()
+{
+    std::cout<<"Hello World "<<test_value<<'\n';
+    return EXIT_SUCCESS;
+}
+
+@Tag END
