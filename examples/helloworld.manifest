@@ -1,0 +1,24 @@
+@Tag 1
+
+#include <iostream>
+#include <cstdlib>
+
+int main()
+{
+    std::cout<<"Hello World\n";
+    return EXIT_SUCCESS;
+}
+
+@Tag 2
+
+cmake_minimum_required(VERSION 3.12)
+project(HelloWorld)
+add_executable(HelloWorld src/main.cpp)
+
+@Tag 3
+
+#ifndef HelloWorld_H
+#define HelloWorld_H
+static int test_value=99;
+#endif
+

@@ -1,0 +1,19 @@
+{
+    "pre_build" : "cmake ..",
+    "build_command" : "cmake --build .",
+    "build_directory" : "build",
+    "root_directory" : "hello_world",
+    "project_dirs" : ["src","include"],
+    "project_files" :["CMakeLists.txt","src/main.cpp","include/hello_world.h"],
+    "steps" : [
+                {
+                    "add" : {"src/main.cpp" :"@Tag 1",
+                    "CMakeLists.txt" : "@Tag 2" },
+                    "run" : "./HelloWorld"
+                },
+                {
+                    "add" : {"include/hello_world.h" : "@Tag 3"},
+                    "run" : "./HelloWorld"
+                }
+            ]
+    }
