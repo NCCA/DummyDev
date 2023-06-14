@@ -11,7 +11,7 @@ int main()
 
 @Tag 2
 project(HelloWorld)
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.20)
 # Here we set the C++ standard to use
 set(CMAKE_CXX_STANDARD 17)
 include_directories(include)
