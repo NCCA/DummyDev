@@ -9,7 +9,6 @@
                 {
                     "add" : {"src/main.cpp" :"@Tag 1",
                     "CMakeLists.txt" : "@Tag 2" },
-                    "replace" :{},
                     "run" : "./HelloWorld"
                 },
                 {
