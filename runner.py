@@ -2,6 +2,8 @@ import json
 import os
 import pathlib
 import subprocess
+import time
+import random
 
 """ This class is the main class that runs the build process as well as loading in 
 the manifest file and processing the build steps"""
@@ -18,6 +20,8 @@ class Runner:
         self.root_directory = ""  # where the project source lives
         if add_delay:
             self.add_delay = True
+        else:
+            self.add_delay = False
 
     """This is the main function that runs the build process"""
 
@@ -52,6 +56,10 @@ class Runner:
             self.project_dirs = self.build_data["project_dirs"]
             self.project_files = self.build_data["project_files"]
             self.pre_build = self.build_data["pre_build"]
+            if self.build_data["max_sleep"] != "":
+                self.max_sleep = int(self.build_data["max_sleep"])
+            else:
+                self.max_sleep = 0
         except KeyError as e:
             print(f"KeyError: {e}")
             raise e
@@ -113,18 +121,26 @@ class Runner:
                 for file, tag in step["add"].items():
                     with open(f"{self.root_directory}/{file}", "a") as f:
                         f.write(self.manifest[tag])
+                    if self.add_delay:
+                        self._random_delay()
             except KeyError as e:
                 pass
             try:
                 for file, tag in step["replace"].items():
                     with open(f"{self.root_directory}/{file}", "w") as f:
                         f.write(self.manifest[tag])
+                    if self.add_delay:
+                        self._random_delay()
             except KeyError as e:
                 pass
             # Now files are changed re-build (we can do this as default)
             self._build()
+            if self.add_delay:
+                self._random_delay()
             # now run the run command if it exists
             try:
+                if self.add_delay:
+                    self._random_delay()
                 os.chdir(
                     f'{self.working_directory}/{self.build_data["root_directory"]}/{self.build_data["build_directory"]}'
                 )
@@ -141,3 +157,8 @@ class Runner:
             f'{self.working_directory}/{self.build_data["root_directory"]}/{self.build_data["build_directory"]}'
         )
         subprocess.run(self.build_command, shell=True)
+
+    def _random_delay(self) -> None:
+        sleep_time = random.randint(0, self.max_sleep) / 1000
+        print(f"adding delay of {sleep_time} ms")
+        time.sleep(sleep_time)
