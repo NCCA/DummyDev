@@ -4,6 +4,7 @@ import pathlib
 import subprocess
 import time
 import random
+from typing import List
 
 """ This class is the main class that runs the build process as well as loading in 
 the manifest file and processing the build steps"""
@@ -29,17 +30,22 @@ class Runner:
         print(f"loading {self.file_name}")
         with open(self.file_name, "r") as f:
             self.build_data = json.load(f)
-        # remove the existing project if it exists
-        if pathlib.Path(self.build_data["root_directory"]).exists():
-            os.system(f"rm -rf {self.build_data['root_directory']}")
-
         # Initial project setup before running build command
         self._get_base_details()
+        # remove the existing project if it exists
+        try:
+            print(
+                f"removing {self.root_directory} {pathlib.Path(self.root_directory).exists()=}"
+            )
+            if pathlib.Path(self.root_directory).exists():
+                os.system(f"rm -rf {self.root_directory}")
+        except Exception as e:
+            print(f"Exception: {e}")
+            pass
         self._build_project_folders()
-        self._create_project_files()
         self._load_manifest(self.manifest_file)
+
         # now process the build steps
-        self._pre_build()
         self._process_build_steps()
 
     """get the base details from the json file"""
@@ -47,16 +53,23 @@ class Runner:
     def _get_base_details(self) -> None:
         try:
             self.build_command = self.build_data["build_command"]
-            self.root_directory = (
-                f'{self.working_directory}/{self.build_data["root_directory"]}'
-            )
+            self.root_directory = f'{self.build_data["root_directory"]}'
+            if self.root_directory.startswith("~"):
+                self.root_directory = self.root_directory.replace(
+                    "~", os.path.expanduser("~")
+                )
+                print(self.root_directory)
+            if self.root_directory.startswith("./"):
+                self.root_directory = self.root_directory.replace(
+                    "./", f"{self.working_directory}/"
+                )
+                print(self.root_directory)
             self.build_directory = (
                 f'{self.root_directory}/self.build_data["build_directory"]'
             )
             self.project_dirs = self.build_data["project_dirs"]
-            self.project_files = self.build_data["project_files"]
             self.pre_build = self.build_data["pre_build"]
-            if self.build_data["max_sleep"] != "":
+            if self.build_data.get("max_sleep") is not None:
                 self.max_sleep = int(self.build_data["max_sleep"])
             else:
                 self.max_sleep = 0
@@ -67,6 +80,7 @@ class Runner:
     """create the project folders"""
 
     def _build_project_folders(self) -> None:
+        print(f"creatingm project {self.root_directory}")
         pathlib.Path(self.root_directory).mkdir(parents=True, exist_ok=True)
         pathlib.Path(f"{self.root_directory}/build").mkdir(parents=True, exist_ok=True)
 
@@ -80,16 +94,14 @@ class Runner:
     def _pre_build(self) -> None:
         if self.pre_build:
             print(f"running {self.pre_build}")
-            os.chdir(
-                f'{self.working_directory}/{self.build_data["root_directory"]}/{self.build_data["build_directory"]}'
-            )
+            os.chdir(f'{self.root_directory}/{self.build_data["build_directory"]}')
             subprocess.run(self.pre_build, shell=True)
 
     """For ease we create the default files for the project"""
 
-    def _create_project_files(self) -> None:
-        for project_file in self.project_files:
-            pathlib.Path(self.root_directory, project_file).touch(exist_ok=True)
+    def _add_project_files(self, files: List[str]) -> None:
+        for file in files:
+            pathlib.Path(self.root_directory, file).touch(exist_ok=True)
 
     """load in the manifest file and store it in a dictionary 
         parm : manifest_file - the file to load
@@ -116,6 +128,13 @@ class Runner:
 
     def _process_build_steps(self) -> None:
         for step in self.build_data["steps"]:
+            # create and new files first
+            try:
+                self._add_project_files(step["create_files"])
+            except KeyError as e:
+                pass
+            if step.get("pre_build") is not None:
+                self._pre_build()
             # do the add and replace steps if they exist
             try:
                 for file, tag in step["add"].items():
@@ -141,21 +160,20 @@ class Runner:
             try:
                 if self.add_delay:
                     self._random_delay()
-                os.chdir(
-                    f'{self.working_directory}/{self.build_data["root_directory"]}/{self.build_data["build_directory"]}'
-                )
+                os.chdir(f'{self.root_directory}/{self.build_data["build_directory"]}')
                 # now run the run command
-                data = subprocess.run(step["run"], shell=True)
+                for cmd in step["run"]:
+                    print(f"running {cmd} in {os.getcwd()}")
+                    data = subprocess.run(cmd, shell=True)
             except KeyError as e:
                 pass
 
     """build the project using the build command pass in the json file"""
 
     def _build(self) -> None:
-        print(f"running {self.build_command}")
-        os.chdir(
-            f'{self.working_directory}/{self.build_data["root_directory"]}/{self.build_data["build_directory"]}'
-        )
+        print(f"running {self.build_command} in {os.getcwd()}")
+        os.chdir(f'{self.root_directory}/{self.build_data["build_directory"]}')
+
         subprocess.run(self.build_command, shell=True)
 
     def _random_delay(self) -> None:
