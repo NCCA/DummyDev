@@ -1,0 +1,183 @@
+{
+    "pre_build": "cmake -G Ninja ..",
+    "build_command": "cmake  --build . --clean-first",
+    "build_directory": "build",
+    "root_directory": "~/tmp/Vec3GTest",
+    "project_dirs": [
+        "src",
+        "include",
+        "tests"
+    ],
+    "max_sleep": 1000,
+    "steps": [
+        {
+            "create_files": [
+                "CMakeLists.txt",
+                "src/main.cpp",
+                "tests/TestVec3.cpp"
+            ],
+            "add": {
+                "src/main.cpp": "@Tag 1",
+                "CMakeLists.txt": "@Tag 2"
+            },
+            "pre_build": [
+                "this just triggers the pre-build command"
+            ],
+            "run": [
+                "./HelloWorld"
+            ]
+        },
+        {
+            "create_files": [
+                "include/Vec3.h",
+                "src/Vec3.cpp"
+            ],
+            "add": {
+                "src/Vec3.cpp": "@Tag 3",
+                "include/Vec3.h": "@Tag 4",
+                "tests/TestVec3.cpp": "@Tag 5",
+                ".gitignore": "@Tag 7"
+            },
+            "replace": {
+                "CMakeLists.txt": "@Tag 6"
+            },
+            "pre_build": [
+                "this just triggers the pre-build command"
+            ],
+            "run": [
+                "cd .. && git init ",
+                "git add ..",
+                "git commit -am \"initial commit\"",
+                "./Vec3Tests"
+            ]
+        },
+        {
+            "replace": {
+                "include/Vec3.h": "@Tag 8",
+                "tests/TestVec3.cpp": "@Tag 9"
+            },
+            "run": [
+                "./Vec3Tests",
+                "git commit -am \"added Vec3 class\""
+            ]
+        },
+        {
+            "add": {
+                "tests/TestVec3.cpp": "@Tag 10"
+            },
+            "run": [
+                "./Vec3Tests",
+                "git commit -am \"added failing test\""
+            ]
+        },
+        {
+            "add": {
+                "src/Vec3.cpp": "@Tag 11"
+            },
+            "run": [
+                "./Vec3Tests",
+                "git commit -am \"added failing test\""
+            ]
+        },
+        {
+            "add": {
+                "tests/TestVec3.cpp": "@Tag 12",
+                "src/Vec3.cpp": "@Tag 13"
+            },
+            "run": [
+                "./Vec3Tests",
+                "git commit -am \"added + operator\""
+            ]
+        },
+        {
+            "add": {
+                "tests/TestVec3.cpp": "@Tag 14",
+                "src/Vec3.cpp": "@Tag 15"
+            },
+            "run": [
+                "./Vec3Tests",
+                "git commit -am \"added - operator\""
+            ]
+        },
+        {
+            "add": {
+                "tests/TestVec3.cpp": "@Tag 16",
+                "src/Vec3.cpp": "@Tag 17"
+            },
+            "run": [
+                "./Vec3Tests",
+                "git commit -am \"added * operator\""
+            ]
+        },
+        {
+            "add": {
+                "tests/TestVec3.cpp": "@Tag 18",
+                "src/Vec3.cpp": "@Tag 19"
+            },
+            "run": [
+                "./Vec3Tests",
+                "git commit -am \"added / operator\""
+            ]
+        },
+        {
+            "add": {
+                "tests/TestVec3.cpp": "@Tag 20",
+                "src/Vec3.cpp": "@Tag 21"
+            },
+            "run": [
+                "./Vec3Tests",
+                "git commit -am \"added += operator\""
+            ]
+        },
+        {
+            "add": {
+                "tests/TestVec3.cpp": "@Tag 22",
+                "src/Vec3.cpp": "@Tag 23"
+            },
+            "run": [
+                "./Vec3Tests",
+                "git commit -am \"added -= operator\""
+            ]
+        },
+        {
+            "add": {
+                "tests/TestVec3.cpp": "@Tag 24",
+                "src/Vec3.cpp": "@Tag 25"
+            },
+            "run": [
+                "./Vec3Tests",
+                "git commit -am \"added *= operator\""
+            ]
+        },
+        {
+            "add": {
+                "tests/TestVec3.cpp": "@Tag 26",
+                "src/Vec3.cpp": "@Tag 27"
+            },
+            "run": [
+                "./Vec3Tests",
+                "git commit -am \"added /= operator\""
+            ]
+        },
+        {
+            "add": {
+                "tests/TestVec3.cpp": "@Tag 28",
+                "src/Vec3.cpp": "@Tag 29"
+            },
+            "run": [
+                "./Vec3Tests",
+                "git commit -am \"added == operator\""
+            ]
+        },
+        {
+            "add": {
+                "tests/TestVec3.cpp": "@Tag 30",
+                "src/Vec3.cpp": "@Tag 31"
+            },
+            "run": [
+                "./Vec3Tests",
+                "git commit -am \"added != operator\""
+            ]
+        }
+    ]
+}
