@@ -139,7 +139,7 @@ class Runner:
             try:
                 for file, tag in step["add"].items():
                     with open(f"{self.root_directory}/{file}", "a") as f:
-                        f.write(self.manifest[tag])
+                        f.write(self.manifest[tag] + "\n")
                     if self.add_delay:
                         self._random_delay()
             except KeyError as e:
