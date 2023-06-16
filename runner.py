@@ -23,7 +23,8 @@ class Runner:
             self.add_delay = True
         else:
             self.add_delay = False
-        self.env=os.environ.copy()
+        self.env = os.environ.copy()
+
     """This is the main function that runs the build process"""
 
     def run(self) -> None:
@@ -35,7 +36,7 @@ class Runner:
         # remove the existing project if it exists
         try:
             print(
-                f"removing {self.root_directory} {pathlib.Path(self.root_directory).exists()=}"
+                f"removing {self.root_directory} {pathlib.Path(self.root_directory).exists()}"
             )
             if pathlib.Path(self.root_directory).exists():
                 os.system(f"rm -rf {self.root_directory}")
@@ -95,7 +96,7 @@ class Runner:
         if self.pre_build:
             print(f"running {self.pre_build}")
             os.chdir(f'{self.root_directory}/{self.build_data["build_directory"]}')
-            os.system('rm -f CMakeCache.txt')
+            os.system("rm -f CMakeCache.txt")
             subprocess.run(self.pre_build, shell=True, env=self.env)
 
     """For ease we create the default files for the project"""
@@ -165,7 +166,7 @@ class Runner:
                 # now run the run command
                 for cmd in step["run"]:
                     print(f"running {cmd} in {os.getcwd()}")
-                    data = subprocess.run(cmd, shell=True,env=self.env)
+                    data = subprocess.run(cmd, shell=True, env=self.env)
             except KeyError as e:
                 pass
 
@@ -175,7 +176,7 @@ class Runner:
         print(f"running {self.build_command} in {os.getcwd()}")
         os.chdir(f'{self.root_directory}/{self.build_data["build_directory"]}')
 
-        subprocess.run(self.build_command, shell=True,env=self.env)
+        subprocess.run(self.build_command, shell=True, env=self.env)
 
     def _random_delay(self) -> None:
         sleep_time = random.randint(0, self.max_sleep) / 1000
