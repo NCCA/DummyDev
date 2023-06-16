@@ -2,7 +2,7 @@
     "pre_build": "cmake  ..",
     "build_command": "cmake  --build . --clean-first",
     "build_directory": "build",
-    "root_directory": "/home/jmacey/tmp/Vec3GTest",
+    "root_directory": "~/tmp/Vec3GTest",
     "project_dirs": [
         "src",
         "include",
