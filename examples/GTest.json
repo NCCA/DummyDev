@@ -1,8 +1,8 @@
 {
-    "pre_build": "cmake -G Ninja ..",
+    "pre_build": "cmake  ..",
     "build_command": "cmake  --build . --clean-first",
     "build_directory": "build",
-    "root_directory": "~/tmp/Vec3GTest",
+    "root_directory": "/home/jmacey/tmp/Vec3GTest",
     "project_dirs": [
         "src",
         "include",
@@ -45,6 +45,7 @@
                 "this just triggers the pre-build command"
             ],
             "run": [
+                "rm -rf * && cmake .. && cmake --build .",
                 "cd .. && git init ",
                 "git add ..",
                 "git commit -am \"initial commit\"",
